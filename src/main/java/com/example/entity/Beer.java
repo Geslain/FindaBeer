@@ -17,6 +17,11 @@ public class Beer {
     @Column(nullable = false)
     private String brand;
 
+
+    public Beer(String brand) {
+        this.brand = brand;
+    }
+
     public long getId() {
         return id;
     }
