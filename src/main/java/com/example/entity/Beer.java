@@ -1,22 +1,35 @@
 package com.example.entity;
 
-import org.springframework.data.annotation.Id;
+
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-
-/**
- * Created by Gess on 28/09/2016.
- */
+import javax.persistence.Id;
 
 @Entity
 public class Beer {
 
     @Id
     @GeneratedValue
-    protected long id;
+    private long id;
 
     @Column(nullable = false)
-    private String name;
+    private String brand;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
 }
