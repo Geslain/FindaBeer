@@ -21,7 +21,7 @@ public class Bar {
     private String address;
 
     @Column(nullable = false)
-    private short zipCode;
+    private int zipCode;
 
     @Column(nullable = false)
     private String city;
@@ -61,11 +61,11 @@ public class Bar {
         this.address = address;
     }
 
-    public short getZipCode() {
+    public int getZipCode() {
         return zipCode;
     }
 
-    public void setZipCode(short zipCode) {
+    public void setZipCode(int zipCode) {
         this.zipCode = zipCode;
     }
 
@@ -89,19 +89,15 @@ public class Bar {
         this.beers.add(beer);
     }
 
-    @Override
-    public String toString() {
-        String result = String.format(
-                "Bar [id=%d, name='%s']%n",
-                id, name);
-        if (beers != null) {
-            for(Beer beer : beers) {
-                result += String.format(
-                        "Beer [id=%d, brand='%s']%n",
-                        beer.getId(), beer.getBrand());
-            }
-        }
+    public Set<Beer> getBeers() {
+        return beers;
+    }
 
-        return result;
+    public void setBeers(Set<Beer> beers) {
+        this.beers = beers;
+    }
+
+    public void removeBeer(Beer beer) {
+        beers.remove(beer);
     }
 }
