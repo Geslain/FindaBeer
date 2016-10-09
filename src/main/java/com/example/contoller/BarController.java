@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Set;
 
 @RestController
-@RequestMapping(value = "/bars")
+@RequestMapping(value = "/api/bars")
 public class BarController {
 
     @Autowired
@@ -37,7 +37,7 @@ public class BarController {
      * @param request
      * @return ResponseEntity
      */
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<Iterable<Bar>> getAllBar(HttpServletRequest request) {
         return new ResponseEntity<>(barRepository.findAll(),HttpStatus.OK);
     }
@@ -48,7 +48,7 @@ public class BarController {
      * @param id
      * @return ResponseEntity
      */
-    @RequestMapping(value = "/{id:[\\d]+}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id:[\\d]+}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity getBarAction(@PathVariable("id") long id) {
         Bar bar = barRepository.findOne(id);
         if( bar == null) {
@@ -63,7 +63,7 @@ public class BarController {
      * @param  bar
      * @return ResponseEntity
      */
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity createBarAction(@RequestBody Bar bar) {
         return new ResponseEntity<>(barRepository.save(bar), HttpStatus.OK);
     }
@@ -75,7 +75,7 @@ public class BarController {
      * @param id
      * @return ResponseEntity
      */
-    @RequestMapping(value = "/{id:[\\d]+}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{id:[\\d]+}", method = RequestMethod.PUT, produces = "application/json")
     public ResponseEntity<?> updateBarAction(@PathVariable(value = "id") long id,@RequestBody Bar _bar) {
         Bar bar = barRepository.findOne(id);
         if(bar == null) return new ResponseEntity<>(getNotFoundMessage("Bar"), HttpStatus.NOT_FOUND);
@@ -122,11 +122,13 @@ public class BarController {
      */
     @RequestMapping(value = "/{id:[\\d]+}/beers", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<?> addBeerForBarAction(@PathVariable("id") long id,@RequestBody Beer beer) {
+
         if(beerRepository.findOne(beer.getId())== null) {
             beerRepository.save(beer);
         }
 
         Bar bar = barRepository.findOne(id);
+        if(bar == null) return new ResponseEntity<>(getNotFoundMessage("Bar"), HttpStatus.NOT_FOUND);
         bar.addBeer(beer);
         return new ResponseEntity<>(barRepository.save(bar), HttpStatus.OK);
     }
@@ -147,6 +149,7 @@ public class BarController {
         }
 
         Bar bar = barRepository.findOne(id);
+        if(bar == null) return new ResponseEntity<>(getNotFoundMessage("Bar"), HttpStatus.NOT_FOUND);
         bar.addBeer(beer);
         return new ResponseEntity<>(barRepository.save(bar), HttpStatus.OK);
     }
