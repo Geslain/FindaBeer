@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/beer")
+@RequestMapping(value = "/api/beers")
 public class BeerController {
 
     @Autowired
@@ -37,7 +37,7 @@ public class BeerController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/{id:[\\d]+}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id:[\\d]+}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<?> getBeerAction(@PathVariable("id") long id) {
         Beer beer = repository.findOne(id);
         if(beer == null) {
@@ -52,7 +52,7 @@ public class BeerController {
      * @param beer
      * @return
      */
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<?> createBeerAction(@RequestBody Beer beer) {
         return new ResponseEntity<>(repository.save(beer), HttpStatus.OK);
     }
@@ -65,7 +65,7 @@ public class BeerController {
      * @param _beer
      * @return
      */
-    @RequestMapping(value = "/{id:[\\d]+}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{id:[\\d]+}", method = RequestMethod.PUT, produces = "application/json")
     public ResponseEntity<?> updateBeerAction(@PathVariable(value = "id") long id ,@RequestBody Beer _beer) {
         Beer beer = repository.findOne(id);
         if(beer == null) {
