@@ -1,42 +1,30 @@
 package com.example.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import java.awt.print.Book;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "bars")
-public class Bar {
-
-    @Id
-    @GeneratedValue
+@Table(name = "bar")
+public class Bar implements Serializable{
     private long id;
-
-    @Column(nullable = false)
     private String name;
-
-    @Column(nullable = false)
     private String address;
-
-    @Column(nullable = false)
     private int zipCode;
-
-    @Column(nullable = false)
     private String city;
-
     private String description;
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "beers_bars",
-            joinColumns = @JoinColumn(name = "bar_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "beer_id", referencedColumnName = "id"))
-    private Set<Beer> beers = new HashSet<Beer>();
+    private Set<BeerBar> beerBar = new HashSet<>();
 
     public Bar() {
     }
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     public long getId() {
         return id;
     }
@@ -85,19 +73,12 @@ public class Bar {
         this.description = description;
     }
 
-    public void addBeer(Beer beer) {
-        this.beers.add(beer);
+    @OneToMany(mappedBy = "bar")
+    public Set<BeerBar> getBeerBar() {
+        return beerBar;
     }
 
-    public Set<Beer> getBeers() {
-        return beers;
-    }
-
-    public void setBeers(Set<Beer> beers) {
-        this.beers = beers;
-    }
-
-    public void removeBeer(Beer beer) {
-        beers.remove(beer);
+    public void setBeerBar(Set<BeerBar> beerBar) {
+        this.beerBar = beerBar;
     }
 }
