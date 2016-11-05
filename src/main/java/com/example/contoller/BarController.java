@@ -2,6 +2,7 @@ package com.example.contoller;
 
 import com.example.entity.Bar;
 import com.example.entity.Beer;
+import com.example.entity.BeerBar;
 import com.example.repository.BarRepository;
 import com.example.repository.BeerRepository;
 import javassist.NotFoundException;
@@ -110,7 +111,7 @@ public class BarController {
     public ResponseEntity<?> getBeerForBarAction(@PathVariable("id") long id) throws NotFoundException{
         Bar bar = barRepository.findOne(id);
         if(bar == null) return new ResponseEntity<>(getNotFoundMessage("Bar"), HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(bar.getBeers(), HttpStatus.OK);
+        return new ResponseEntity<>(bar.getBeerBar(), HttpStatus.OK);
     }
 
     /**
@@ -129,7 +130,7 @@ public class BarController {
 
         Bar bar = barRepository.findOne(id);
         if(bar == null) return new ResponseEntity<>(getNotFoundMessage("Bar"), HttpStatus.NOT_FOUND);
-        bar.addBeer(beer);
+//        bar.addBeer(beer);
         return new ResponseEntity<>(barRepository.save(bar), HttpStatus.OK);
     }
 
@@ -142,16 +143,26 @@ public class BarController {
      * @return ResponseEntity
      */
     @RequestMapping(value = "/{id:[\\d]+}/beers/{id_beer:[\\d]+}", method = RequestMethod.PUT, produces = "application/json")
-    public ResponseEntity<?> addBeerForBarAction(@PathVariable("id") long id,@PathVariable("id_beer") long idBeer) {
+    public ResponseEntity<?> addBeerForBarAction(@PathVariable("id") long id,@PathVariable("id_beer") long idBeer,@RequestParam("price") double price) {
         Beer beer = beerRepository.findOne(idBeer);
         if(beer == null) {
             return new ResponseEntity<>(getNotFoundMessage("Beer"), HttpStatus.NOT_FOUND);
         }
 
         Bar bar = barRepository.findOne(id);
-        if(bar == null) return new ResponseEntity<>(getNotFoundMessage("Bar"), HttpStatus.NOT_FOUND);
-        bar.addBeer(beer);
-        return new ResponseEntity<>(barRepository.save(bar), HttpStatus.OK);
+        if(bar == null)return new ResponseEntity<>(getNotFoundMessage("Bar"), HttpStatus.NOT_FOUND);
+
+        BeerBar beerbar = new BeerBar();
+        beerbar.setBeer(beer);
+        beerbar.setBar(bar);
+        beerbar.setPrice(price);
+
+        beer.getBeerBar().add(beerbar);
+        //bar.getBeerBar().add(beerbar);
+        bar = barRepository.save(bar);
+        beerRepository.save(beer);
+
+        return new ResponseEntity<>( bar , HttpStatus.OK);
     }
 
     /**
@@ -169,7 +180,7 @@ public class BarController {
             if(beer == null) {
                 return new ResponseEntity<>(getNotFoundMessage("Beer"), HttpStatus.NOT_FOUND);
             }
-            bar.removeBeer(beer);
+//            bar.removeBeer(beer);
             return new ResponseEntity<Bar>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(getNotFoundMessage("Bar"), HttpStatus.NOT_FOUND);
