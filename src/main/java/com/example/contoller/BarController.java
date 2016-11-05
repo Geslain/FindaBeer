@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @RestController
@@ -115,24 +116,24 @@ public class BarController {
     }
 
     /**
-     * Add a new a beer and add it to a a bar
+     * Add a new a beer and add it to a a bar (optionnal)
      *
      * @param id
      * @param beer
      * @return ResponseEntity
      */
-    @RequestMapping(value = "/{id:[\\d]+}/beers", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<?> addBeerForBarAction(@PathVariable("id") long id,@RequestBody Beer beer) {
-
-        if(beerRepository.findOne(beer.getId())== null) {
-            beerRepository.save(beer);
-        }
-
-        Bar bar = barRepository.findOne(id);
-        if(bar == null) return new ResponseEntity<>(getNotFoundMessage("Bar"), HttpStatus.NOT_FOUND);
-//        bar.addBeer(beer);
-        return new ResponseEntity<>(barRepository.save(bar), HttpStatus.OK);
-    }
+//    @RequestMapping(value = "/{id:[\\d]+}/beers", method = RequestMethod.POST, produces = "application/json")
+//    public ResponseEntity<?> addBeerForBarAction(@PathVariable("id") long id,@RequestBody Beer beer) {
+//
+//        if(beerRepository.findOne(beer.getId())== null) {
+//            beerRepository.save(beer);
+//        }
+//
+//        Bar bar = barRepository.findOne(id);
+//        if(bar == null) return new ResponseEntity<>(getNotFoundMessage("Bar"), HttpStatus.NOT_FOUND);
+////        bar.addBeer(beer);
+//        return new ResponseEntity<>(barRepository.save(bar), HttpStatus.OK);
+//    }
 
 
     /**
@@ -143,7 +144,7 @@ public class BarController {
      * @return ResponseEntity
      */
     @RequestMapping(value = "/{id:[\\d]+}/beers/{id_beer:[\\d]+}", method = RequestMethod.PUT, produces = "application/json")
-    public ResponseEntity<?> addBeerForBarAction(@PathVariable("id") long id,@PathVariable("id_beer") long idBeer,@RequestParam("price") double price) {
+    public ResponseEntity<?> addBeerForBarAction(@PathVariable("id") long id,@PathVariable("id_beer") long idBeer,@RequestBody BeerBar beerBar) {
         Beer beer = beerRepository.findOne(idBeer);
         if(beer == null) {
             return new ResponseEntity<>(getNotFoundMessage("Beer"), HttpStatus.NOT_FOUND);
@@ -152,13 +153,10 @@ public class BarController {
         Bar bar = barRepository.findOne(id);
         if(bar == null)return new ResponseEntity<>(getNotFoundMessage("Bar"), HttpStatus.NOT_FOUND);
 
-        BeerBar beerbar = new BeerBar();
-        beerbar.setBeer(beer);
-        beerbar.setBar(bar);
-        beerbar.setPrice(price);
+        beerBar.setBeer(beer);
+        beerBar.setBar(bar);
 
-        beer.getBeerBar().add(beerbar);
-        //bar.getBeerBar().add(beerbar);
+        beer.getBeerBar().add(beerBar);
         bar = barRepository.save(bar);
         beerRepository.save(beer);
 
@@ -180,8 +178,19 @@ public class BarController {
             if(beer == null) {
                 return new ResponseEntity<>(getNotFoundMessage("Beer"), HttpStatus.NOT_FOUND);
             }
-//            bar.removeBeer(beer);
-            return new ResponseEntity<Bar>(HttpStatus.OK);
+            Set<BeerBar> beerBarList = beer.getBeerBar();
+
+            for(BeerBar beerBar : beerBarList)
+            {
+                if(beerBar.getBeer().getId() == idBeer && beerBar.getBar().getId() == id){
+
+                    beer.getBeerBar().remove(beerBar);
+                    beerRepository.save(beer);
+                    return new ResponseEntity<Bar>(HttpStatus.OK);
+                }
+            }
+            return new ResponseEntity<>(getNotFoundMessage("Beer/Bar Association"),HttpStatus.NOT_FOUND);
+
         } else {
             return new ResponseEntity<>(getNotFoundMessage("Bar"), HttpStatus.NOT_FOUND);
         }

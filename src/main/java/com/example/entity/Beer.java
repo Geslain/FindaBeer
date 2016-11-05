@@ -55,7 +55,7 @@ public class Beer implements Serializable{
         this.type = type;
     }
 
-    @OneToMany(mappedBy = "beer",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "beer",cascade = CascadeType.ALL, orphanRemoval=true)
     @JsonBackReference
     public Set<BeerBar> getBeerBar() {
         return beerBar;

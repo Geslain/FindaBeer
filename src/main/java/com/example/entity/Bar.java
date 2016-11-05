@@ -73,7 +73,7 @@ public class Bar implements Serializable{
         this.description = description;
     }
 
-    @OneToMany(mappedBy = "bar")
+    @OneToMany(mappedBy = "bar",cascade = CascadeType.ALL, orphanRemoval=true)
     public Set<BeerBar> getBeerBar() {
         return beerBar;
     }
