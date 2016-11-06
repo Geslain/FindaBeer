@@ -82,6 +82,7 @@ public class BarController {
         Bar bar = barRepository.findOne(id);
         if(bar == null) return new ResponseEntity<>(getNotFoundMessage("Bar"), HttpStatus.NOT_FOUND);
         _bar.setId(id);
+        _bar.setBeerBar(bar.getBeerBar());
         return new ResponseEntity<>(barRepository.save(_bar), HttpStatus.OK);
     }
 
