@@ -1,5 +1,10 @@
 # FindaBeer
 
+## Installation
+
+* Install maven dependances
+* Create database and check configuration
+
 ## Database Configuration
 ```
 spring.datasource.url=jdbc:mysql://localhost/findabeer
