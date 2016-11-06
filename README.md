@@ -2,7 +2,7 @@
 
 ## Installation
 
-* Install maven dependances
+* Install maven dependancies
 * Create database and check configuration
 
 ## Database Configuration
